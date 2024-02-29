@@ -1,0 +1,121 @@
+plugins {
+    alias libs.plugins.androidGradlePlugin
+    alias libs.plugins.nmcp
+    id 'maven-publish'
+    id 'signing'
+}
+
+group 'io.github.tia-ru'
+
+android {
+    namespace 'ru.tia.reactor.android'
+
+    compileSdk 31
+    buildToolsVersion= '34.0.0'
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        minSdkVersion 26
+        targetSdkVersion 31
+        versionCode VERSION_CODE.toInteger()
+        versionName project.version
+    }
+
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+        debug {
+            debuggable true
+        }
+
+    }
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+}
+
+dependencies {
+    // projectreactor
+    compileOnly platform(libs.reactor.platform)
+    compileOnly libs.reactor.core
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            sonatype(MavenPublication) {
+                from components.release
+                pom {
+                    name = "Reactor Android scheduler"
+                    description = "Provides a Scheduler that executes a Reactor's reactive sequence in the main thread of an Android application or in any other `Looper`"
+                    url = "https://github.com/tia-ru/reactor-android-scheduler"
+
+                    licenses {
+                        license {
+                            name = "The Apache License, Version 2.0"
+                            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        }
+                    }
+                    scm {
+                        url = "https://github.com/tia-ru/reactor-android-scheduler"
+                        connection = "scm:git:https://github.com/tia-ru/reactor-android-scheduler.git"
+                        developerConnection = "scm:git:https://github.com/tia-ru/reactor-android-scheduler.git"
+                    }
+                    developers {
+                        developer {
+                            id = 'tia-ru'
+                            name = 'TIA'
+                            email = 'example@example.org'
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Call "other/publishSonatypePublicationToCentralPortal" task to publish
+    nmcp {
+        // nameOfYourPublication must point to an existing publication
+        publish('sonatype') {
+            it.username.set(project.ossrhUsername)
+            it.password.set(project.ossrhPassword)
+            it.publicationType.set("USER_MANAGED")
+            // or if you want to publish automatically
+            //it.publicationType.set("AUTOMATIC")
+        }
+    }
+
+}
+
+signing {
+    useInMemoryPgpKeys(
+            findProperty("signing.keyId"),
+            base64Decode(findProperty("signing.base64key")),
+            findProperty("signing.password")
+    )
+    sign publishing.publications
+}
+
+repositories {
+    google()
+    mavenCentral()
+    mavenLocal()
+}
+
+def base64Decode(encodedString){
+    if(encodedString != null) {
+        byte[] decoded = encodedString.decodeBase64()
+        String decode = new String(decoded)
+        return decode
+    }
+    return ""
+}

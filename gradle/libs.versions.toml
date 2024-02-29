@@ -1,0 +1,13 @@
+[versions]
+androidGradlePlugin = "8.2.2"
+nmcp = "0.0.4"
+reactor-platform = "2023.0.3"
+
+[libraries]
+reactor-platform = { module = "io.projectreactor:reactor-bom", version.ref = "reactor-platform" }
+reactor-core = {module = "io.projectreactor:reactor-core"}
+reactor-test = {module = "io.projectreactor:reactor-test"}
+
+[plugins]
+androidGradlePlugin = { id = "com.android.library", version.ref = "androidGradlePlugin" }
+nmcp = {id = "com.gradleup.nmcp", version.ref = "nmcp"}
