@@ -1,9 +1,14 @@
 # Reactor Scheduler for Android
 
+![Reactor Scheduler at Maven Central](https://img.shields.io/maven-central/v/io.github.tia-ru/reactor-android-scheduler?style=plastic&logo=apachemaven&logoColor=%23C71A36)
+![GitHub License](https://img.shields.io/github/license/tia-ru/reactor-android-scheduler?style=plastic)
+
+
 Android specific extension for [Reactor](https://github.com/reactor/reactor-core).
 
 This module provides a `Scheduler` that executes `Reactor's` reactive sequence in
-the main thread of an Android application or in any other `Looper`. This allows you to use the `Reactor` to write reactive components for Android.
+the main thread of an Android application or in any other `Looper`.
+This makes it possible to use `Reactor` to write reactive components for Android.
 
 **Android SDK version:** 26 (Android 8.0) and above
 
@@ -38,7 +43,7 @@ Then use `build/outputs/aar/reactor-android-scheduler-release.aar` in your proje
 
 One of the most common operations when dealing with asynchronous tasks on Android is to observe the task's
 result or outcome on the main thread. Using vanilla Android, this would typically be accomplished with an
-`AsyncTask`. With Reactor instead you would declare your `Flux` and use `AndroidSchedulers.mainThread()` from `reactor-android-scheduler` to be observed on the main thread:
+`AsyncTask`. With `Reactor` instead you would declare your `Flux` and use `AndroidSchedulers.mainThread()` from `reactor-android-scheduler` to be observed on the main thread:
 
 ```java
 Flux.just("one", "two", "three")
@@ -47,7 +52,7 @@ Flux.just("one", "two", "three")
     .subscribe(/* a Subscriber */);
 ```
 
-This will emit items on elastic thread pool, and observe results on Android application main thread  by `Subscriber`.
+This will emit items on elastic thread pool, and observe results on Android application main thread by `Subscriber`.
 
 ## Observing on arbitrary loopers
 
@@ -70,10 +75,10 @@ This will execute the Flux and emit results on whatever thread is running `backg
 It is recommended to [replace Reactor's schedulers factory](https://projectreactor.io/docs/core/release/reference/index.html#scheduler-factory)
 to provide `AndroidSchedulers.mainThread()` on call to `Schedulers.single()`.
 So `.publishOn(Schedulers.single())` will run on Android main thread.
-This will make testing easier and a code becomes portable better.
+It makes testing easier and a code becomes portable better.
 
 There is helper method `AndroidSchedulers.installMainThreadAsSingle()` to do the replacement.
-This method should be called once on app startup before any call to `Schedulers`.
+The method should be called once on app startup before any call to `Schedulers`.
 Then use `Schedulers.single()` instead of `AndroidSchedulers.mainThread()`
 
 ```java
@@ -84,7 +89,7 @@ public class MyApplication extends Application {
 }
 
 Flux.just("one", "two", "three")
-    .publishOn(Schedulers.single()) // Runs on Android main thread
+    .publishOn(Schedulers.single()) // Executes in Android main thread
     .subscribe(/* a Subscriber */);
 ```
      
